@@ -27,4 +27,9 @@ public interface EmployeeMapper {
     int updateByPrimaryKeySelective(Employee record);
 
     int updateByPrimaryKey(Employee record);
+    
+    //添加查询 Employee 信息的同时查询 Department 的信息
+    List<Employee> selectWithDeptByExample(EmployeeExample example);
+    
+    Employee selectWithDeptByPrimaryKey(Integer empId);
 }

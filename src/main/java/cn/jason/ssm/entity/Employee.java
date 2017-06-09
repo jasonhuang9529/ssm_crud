@@ -10,6 +10,9 @@ public class Employee {
     private String email;
 
     private Integer dId;
+    
+    //关联属性
+    private Department dept;
 
     public Integer getEmpId() {
         return empId;
@@ -50,4 +53,12 @@ public class Employee {
     public void setdId(Integer dId) {
         this.dId = dId;
     }
+
+	public Department getDept() {
+		return dept;
+	}
+
+	public void setDept(Department dept) {
+		this.dept = dept;
+	}
 }
