@@ -20,6 +20,11 @@ public class EmployeeService {
 		List<Employee> emps = employeeMapper.selectWithDeptByExample(null);
 		return emps;
 	}
+
+	@Transactional
+	public void save(Employee emp) {
+		employeeMapper.insertSelective(emp);
+	}
 	
 	
 }

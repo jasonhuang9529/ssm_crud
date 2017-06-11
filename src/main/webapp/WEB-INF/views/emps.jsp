@@ -17,9 +17,100 @@
 	src="${pageContext.request.contextPath }/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
 
 <script type="text/javascript">
+	$(function(){
+		/* 新增 Employee */
+		$("#emp_add_modal_btn").click(function(){
+			//获取 Department 信息，并显示
+			showDept("#add_dept");
+			//弹出添加模态框
+			$("#empAddModal").modal({backdrop:"static"});
+		});
+		
+		/* 保存 */
+		$("#emp_save_btn").click(function(){
+			$.ajax({
+				url:"${pageContext.request.contextPath}/emp",
+				type:"POST",
+				data:$("#empAddModal form").serialize(),
+				success:function(){
+					alert("保存成功！");
+					//关闭添加模态框
+					$("#empAddModal").modal('hide');
+				}
+			});
+		});
+	});
+	
+	function showDept(ele){
+		$.ajax({
+			url:"${pageContext.request.contextPath}/depts",
+			type:"GET",
+			success:function(result){
+				$.each(result,function(){
+					$(ele).append("<option value='"+this.deptId+"'>"+ this.deptName +"</option>");
+				});
+			}
+		});
+	}
+
 </script>
 </head>
 <body>
+	<!-- -------- begin 添加Employe  ------------- -->
+	<div id="empAddModal" class="modal fade" tabindex="-1" role="dialog">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title">Add Emp</h4>
+	      </div>
+	      <div class="modal-body">
+	        <form class="form-horizontal">
+	          <div class="form-group">
+			    <label for="add_empname" class="col-sm-2 control-label">姓名</label>
+			    <div class="col-sm-10">
+			      <input type="text" id="add_empname" name="empName" class="form-control" placeholder="empName">
+			    </div>
+			  </div>
+			  
+			  <div class="form-group">
+			    <label for="add_email" class="col-sm-2 control-label">邮箱</label>
+			    <div class="col-sm-10">
+			      <input type="email" class="form-control" id="add_email" name="email" placeholder="name@163.com">
+			    </div>
+			  </div>
+			  
+			  <div class="form-group">
+			  	<label  class="col-sm-2 control-label">性别</label>
+			    <div class="col-sm-10">
+			    	<label class="radio-inline">
+					  <input type="radio" name="gender" id="add_gender1" value="M" checked="checked"> 男
+					</label>
+					<label class="radio-inline">
+					  <input type="radio" name="gender" id="add_gender2" value="F"> 女
+					</label>
+			    </div>
+			  </div>
+			  
+			  <div class="form-group">
+			    <label  class="col-sm-2 control-label">部门</label>
+			    <div class="col-sm-5">
+				    <select class="form-control" id="add_dept" name="dId">
+					</select>
+			    </div>
+			  </div>
+			  
+			</form>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+	        <button type="button" class="btn btn-primary" id="emp_save_btn">Add</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	<!-- -------- end 添加Employe    ------------- -->
+	
 	<div class="container">
 		<!-- 顶部 -->
 		<div class="row">
@@ -59,7 +150,7 @@
 								</td>
 								<td>${emp.empId }</td>
 								<td>${emp.empName }</td>
-								<td>${emp.gender == 'Male'?'男':'女'}</td>
+								<td>${emp.gender == 'M'?'男':'女'}</td>
 								<td>${emp.email}</td>
 								<td>${emp.dept.deptName }</td>
 								<td>

@@ -101,6 +101,13 @@
 		    <version>5.0.1</version>
 		</dependency>
 		
+		<!-- 导入 jackson，支持 json 格式数据 -->
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-databind</artifactId>
+		    <version>2.8.8</version>
+		</dependency>
+		
 	</dependencies>
 
 </project>

@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import cn.jason.ssm.entity.Employee;
@@ -35,5 +36,16 @@ public class EmpHandler {
 		PageInfo<Employee> pageInfo = new PageInfo<>(emps, 5);
 		map.put("pageInfo", pageInfo);
 		return "emps";
+	}
+	
+	/**
+	 * 保存 Employee 信息
+	 * @param emp
+	 * @return
+	 */
+	@RequestMapping(value="/emp", method=RequestMethod.POST)
+	public String emp(Employee emp){
+		empService.save(emp);
+		return "redirect:emps";
 	}
 }
