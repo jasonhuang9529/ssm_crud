@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import cn.jason.ssm.entity.Employee;
 import cn.jason.ssm.service.EmployeeService;
@@ -56,7 +57,7 @@ public class EmpHandler {
 	 * @return
 	 */
 	@RequestMapping(value="/emp/{ids}", method=RequestMethod.DELETE)
-	public String emp(@PathVariable("ids") String ids){
+	public String deleteEmpByIds(@PathVariable("ids") String ids){
 		if(ids.contains("-")){
 			//批量删除
 			String[] idsStr = ids.split("-");
@@ -69,6 +70,24 @@ public class EmpHandler {
 			//单个删除
 			empService.delById(Integer.parseInt(ids));
 		}
+		return "redirect:/emps";
+	}
+	
+	/**
+	 * 通过 id 查询 Employee 信息
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value="/emp/{id}",method=RequestMethod.GET)
+	@ResponseBody
+	public Employee getEmpById(@PathVariable("id") Integer id){
+		Employee emp = empService.getEmpById(id);
+		return emp;
+	}
+	
+	@RequestMapping(value="/emp/{empId}", method=RequestMethod.PUT)
+	public String updateById(Employee emp){
+		empService.updateById(emp);
 		return "redirect:/emps";
 	}
 }

@@ -133,6 +133,16 @@
 		from tbl_emp
 		where emp_id = #{empId,jdbcType=INTEGER}
 	</select>
+	
+	<!-- Employee selectWithDeptByPrimaryKey(Integer empId); -->
+	<select id="selectWithDeptByPrimaryKey" parameterType="java.lang.Integer"
+		resultMap="WithDeptResultMap">
+		select
+		<include refid="WithDept_Column_List" />
+		FROM tbl_emp e LEFT JOIN tbl_dept d  ON e.`d_id`=d.`dept_id`
+		where emp_id = #{empId,jdbcType=INTEGER}
+	</select>
+	
 	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
 		delete from tbl_emp
 		where emp_id = #{empId,jdbcType=INTEGER}

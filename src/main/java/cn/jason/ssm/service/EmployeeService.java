@@ -12,6 +12,7 @@ import cn.jason.ssm.entity.EmployeeExample.Criteria;
 import cn.jason.ssm.mapper.EmployeeMapper;
 
 @Service
+@Transactional
 public class EmployeeService {
 
 	@Autowired
@@ -23,12 +24,10 @@ public class EmployeeService {
 		return emps;
 	}
 
-	@Transactional
 	public void save(Employee emp) {
 		employeeMapper.insertSelective(emp);
 	}
 
-	@Transactional
 	public void batchDelByIds(List<Integer> del_ids) {
 		EmployeeExample example = new EmployeeExample();
 		Criteria criteria = example.createCriteria();
@@ -38,6 +37,15 @@ public class EmployeeService {
 
 	public void delById(int empId) {
 		employeeMapper.deleteByPrimaryKey(empId);
+	}
+
+	@Transactional(readOnly=true)
+	public Employee getEmpById(Integer id) {
+		return employeeMapper.selectWithDeptByPrimaryKey(id);
+	}
+	
+	public void updateById(Employee emp) {
+		employeeMapper.updateByPrimaryKeySelective(emp);
 	}
 	
 	

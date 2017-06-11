@@ -81,8 +81,49 @@
 				});
 			}
 		});
+		
+		/* 删除单个 Employee 信息 */
+		$(document).on("click",".emp_delete_btn",function(){
+			//待删除的 empId
+			var empId = $(this).parents("tr").find("td:eq(1)").text();
+			//待删除的 empName
+			var empName = $(this).parents("tr").find("td:eq(2)").text();
+			
+			if(confirm("确定删除【"+ empName +"】吗？")){
+				$.ajax({
+					url:"${pageContext.request.contextPath}/emp/"+empId,
+					type:"DELETE"
+				});
+			}
+		});
+		
+		/* 显示编辑 Employee 信息 */
+		$(document).on("click",".emp_edit_btn",function(){
+			//待编辑的 empId
+			var empId = $(this).parents("tr").find("td:eq(1)").text();
+			//查询Department 信息
+			showDept("#edit_dept");
+			
+			//根据 empId 查询 Employee 信息
+			getEmpById(empId);
+			
+			//打开编辑模态框
+			$("#empEditModal").modal({backdrop:"static"});
+			
+		});
+		
+		/* 通过 id 进行更新 */
+		$("#emp_edit_btn").click(function(){
+			//待更新的 Employee 的id
+			var empId = $(this).attr("edit-id");
+			//通过empId 进行更新
+			updateById(empId);
+		});
+		
+		
 	});
 	
+	/* 显示 Department 信息 */
 	function showDept(ele){
 		$.ajax({
 			url:"${pageContext.request.contextPath}/depts",
@@ -91,6 +132,37 @@
 				$.each(result,function(){
 					$(ele).append("<option value='"+this.deptId+"'>"+ this.deptName +"</option>");
 				});
+			}
+		});
+	}
+	
+	/* 通过 empId 获取 Employee 信息 */
+	function getEmpById(id){
+		$.ajax({
+			url:"${pageContext.request.contextPath}/emp/"+id,
+			type:"GET",
+			success:function(result){
+				//将对应的值赋给编辑模态框
+				$("#edit_empname").val(result.empName);
+				$("#edit_email").val(result.email);
+				$("#empEditModal input[name='gender']").val([result.gender]);
+				$("#edit_dept").val([result.dId]);
+				
+				//保存当前 empId 方便更新
+				$("#emp_edit_btn").attr("edit-id",result.empId);
+			}
+		});
+	}
+	
+	/* 通过 empId 更新 Employee 信息 */
+	function updateById(id){
+		$.ajax({
+			url:"${pageContext.request.contextPath}/emp/"+id,
+			type:"PUT",
+			data:$("#empEditModal form").serialize(),
+			success:function(){
+				//关闭编辑模态框
+				$("#empEditModal").modal('hide');
 			}
 		});
 	}
@@ -126,7 +198,7 @@
 			  	<label  class="col-sm-2 control-label">性别</label>
 			    <div class="col-sm-10">
 			    	<label class="radio-inline">
-					  <input type="radio" name="gender" id="add_gender1" value="M" checked="checked"> 男
+					  <input type="radio" name="gender" id="add_gender1" value="M" > 男
 					</label>
 					<label class="radio-inline">
 					  <input type="radio" name="gender" id="add_gender2" value="F"> 女
@@ -152,6 +224,61 @@
 	  </div>
 	</div>
 	<!-- -------- end 添加Employe    ------------- -->
+	
+	<!-- -------- begin 编辑Employe  ------------- -->
+	<div id="empEditModal" class="modal fade" tabindex="-1" role="dialog">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title">Edit Emp</h4>
+	      </div>
+	      <div class="modal-body">
+	        <form class="form-horizontal">
+	          <div class="form-group">
+			    <label for="edit_empname" class="col-sm-2 control-label">姓名</label>
+			    <div class="col-sm-10">
+			      <input type="text" id="edit_empname" name="empName" class="form-control" >
+			    </div>
+			  </div>
+			  
+			  <div class="form-group">
+			    <label for="edit_email" class="col-sm-2 control-label">邮箱</label>
+			    <div class="col-sm-10">
+			      <input type="email" class="form-control" id="edit_email" name="email" >
+			    </div>
+			  </div>
+			  
+			  <div class="form-group">
+			  	<label  class="col-sm-2 control-label">性别</label>
+			    <div class="col-sm-10">
+			    	<label class="radio-inline">
+					  <input type="radio" name="gender" id="edit_gender1" value="M" checked="checked"> 男
+					</label>
+					<label class="radio-inline">
+					  <input type="radio" name="gender" id="edit_gender2" value="F"> 女
+					</label>
+			    </div>
+			  </div>
+			  
+			  <div class="form-group">
+			    <label  class="col-sm-2 control-label">部门</label>
+			    <div class="col-sm-5">
+				    <select class="form-control" id="edit_dept" name="dId">
+					</select>
+			    </div>
+			  </div>
+			  
+			</form>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+	        <button type="button" class="btn btn-primary" id="emp_edit_btn">Edit</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	<!-- -------- end 编辑Employe    ------------- -->
 	
 	<div class="container">
 		<!-- 顶部 -->
@@ -196,10 +323,10 @@
 								<td>${emp.email}</td>
 								<td>${emp.dept.deptName }</td>
 								<td>
-									<button class="btn btn-primary btn-xs" id="emp_edit_btn">
+									<button class="btn btn-primary btn-xs emp_edit_btn">
 										<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>编辑
 									</button>
-									<button class="btn btn-danger btn-xs" id="emp_delete_btn">
+									<button class="btn btn-danger btn-xs emp_delete_btn">
 										<span class="glyphicon glyphicon-trash" aria-hidden="true"></span>删除
 									</button>
 								</td>
