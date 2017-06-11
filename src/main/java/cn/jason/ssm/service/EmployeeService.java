@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import cn.jason.ssm.entity.Employee;
+import cn.jason.ssm.entity.EmployeeExample;
+import cn.jason.ssm.entity.EmployeeExample.Criteria;
 import cn.jason.ssm.mapper.EmployeeMapper;
 
 @Service
@@ -24,6 +26,18 @@ public class EmployeeService {
 	@Transactional
 	public void save(Employee emp) {
 		employeeMapper.insertSelective(emp);
+	}
+
+	@Transactional
+	public void batchDelByIds(List<Integer> del_ids) {
+		EmployeeExample example = new EmployeeExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andEmpIdIn(del_ids);
+		employeeMapper.deleteByExample(example);
+	}
+
+	public void delById(int empId) {
+		employeeMapper.deleteByPrimaryKey(empId);
 	}
 	
 	

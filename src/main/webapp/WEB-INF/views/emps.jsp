@@ -39,6 +39,48 @@
 				}
 			});
 		});
+		
+		/* 全选/全不选 */
+		$("#check_all").click(function(){
+			$(".check_emp").prop("checked",$(this).prop("checked"));
+		});
+		
+		/* 为每条记录对应的复选框绑定事件 */
+		$(document).on("click",".check_emp",function(){
+			//选中的记录数
+			var cNum = $(".check_emp:checked").length;
+			if(cNum == $(".check_emp").length){
+				$("#check_all").prop("checked",true);
+			}else{
+				$("#check_all").prop("checked",false);
+			}
+		});
+		
+		/* 批量删除 */
+		$("#emp_delete_all_btn").click(function(){
+			var delNames = "";
+			var del_idstr = "";
+			//获取要删除的 Employee 的 id
+			$(".check_emp:checked").each(function(){
+				var delName = $(this).parents("tr").find("td:eq(2)").text();
+				delNames += (delName + ",");
+				
+				var delId = $(this).parents("tr").find("td:eq(1)").text();
+				del_idstr += (delId + "-");
+			});
+			//去除名称字符串最后的"," 和 id 字符串的最后一个"-"
+			delNames = delNames.substring(0, delNames.length-1);
+			del_idstr = del_idstr.substring(0, del_idstr.length-1);
+			
+			//发送请求进行删除
+			if(confirm("确认删除【"+ delNames +"】吗？")){
+				$.ajax({
+					url:"${pageContext.request.contextPath}/emp/"+del_idstr, 
+					type:"DELETE"
+					
+				});
+			}
+		});
 	});
 	
 	function showDept(ele){
@@ -146,7 +188,7 @@
 						<c:forEach items="${pageInfo.list }" var="emp">
 							<tr>
 								<td>
-									<input type="checkbox" id="check_emp" />
+									<input type="checkbox" class="check_emp" />
 								</td>
 								<td>${emp.empId }</td>
 								<td>${emp.empName }</td>
